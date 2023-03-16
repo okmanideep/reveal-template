@@ -28,7 +28,7 @@
 #### CSS
 `src/index.css`
 
-Comes with `src/one-dark.css` theme. Other [themes can be found here](https://github.com/hakimel/reveal.js/tree/master/dist/theme)
+Comes with `src/one-dark.css` theme that [looks like this](https://okmanideep.github.io/compose-slides/). Other [themes can be found here](https://github.com/hakimel/reveal.js/tree/master/dist/theme)
 
 #### JS
 `src/index.js`
