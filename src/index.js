@@ -1,4 +1,4 @@
 import Reveal from 'reveal.js'
 
-let deck = new Reveal({})
+let deck = new Reveal({hash: true})
 deck.initialize()

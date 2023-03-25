@@ -6,13 +6,25 @@ import esbuild from 'esbuild'
 
 // es-build of src/index.js
 async function js() {
-  const result = await esbuild.build({
-    entryPoints: ["src/index.js"],
-    write: false,
-    bundle: true,
-  })
-  const [indexJs] = result.outputFiles
-  return indexJs.text
+	const result = await esbuild.build({
+		entryPoints: ["src/index.js"],
+		write: false,
+		bundle: true,
+	})
+	const [indexJs] = result.outputFiles
+	return indexJs.text
+}
+
+async function liveReloadJs({ debug = false }) {
+	if (!debug) return ''
+
+	const result = await esbuild.build({
+		entryPoints: ["src/live-reload.js"],
+		write: false,
+		bundle: true,
+	})
+	const [liveReloadJs] = result.outputFiles
+	return liveReloadJs.text
 }
 
 async function css() {
@@ -35,15 +47,15 @@ async function css() {
   return cssOutput.styles
 }
 
-async function main() {
+async function generate({debug = false}) {
   try {
     await fs.promises.access("docs", fs.constants.R_OK | fs.constants.W_OK)
   } catch (_) {
-    console.log("Creating docs directory")
+    if (debug) console.log("Creating docs directory")
     await fs.promises.mkdir("docs")
   } finally {
     // clean`/docs` folder if exists
-    console.log("Cleaning docs")
+    if (debug) console.log("Cleaning docs")
     await fs.promises.rm("docs/index.html", { force: true })
   }
 
@@ -52,12 +64,10 @@ async function main() {
     extname: ".html"
   })
 
-  const [INLINE_JS, INLINE_CSS] = await Promise.all([js(), css()])
-  const htmlStream = await liquid.renderFileToNodeStream("index", { INLINE_CSS, INLINE_JS })
+  const [INLINE_JS, INLINE_CSS, INLINE_LIVE_RELOAD_JS] = await Promise.all([js(), css(), liveReloadJs({ debug })])
+  const htmlStream = await liquid.renderFileToNodeStream("index", { INLINE_CSS, INLINE_JS, INLINE_LIVE_RELOAD_JS })
   await fs.promises.writeFile("docs/index.html", htmlStream)
-  console.log("Updated docs/index.html")
+  if (debug) console.log("Updated docs/index.html")
 }
 
-await main()
-
-export default main
+export default generate
