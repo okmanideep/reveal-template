@@ -17,7 +17,7 @@ async function watchAndBuild() {
 			clients.forEach((ws) => ws.send(JSON.stringify({ type: 'reload' })))
 		}
 	} catch (error) {
-		if (error.name === "AbortError"){
+		if (error.name === "AbortError") {
 			return;
 		}
 
@@ -35,6 +35,7 @@ wss.on('connection', (ws) => {
 const app = express()
 app.use(express.static("docs"))
 app.listen("3333")
+console.log("View your slides here - http://localhost:3333")
 // build once
 await generate({ debug: true })
 // start watching for changes and build on change
